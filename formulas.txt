@@ -1,0 +1,18 @@
+// * data from DB onto FE
+// * filters data based on true/false conditions, sorts based on ascending alphabetical last name, if/filter/sub true for check and false for cross
+=SORT(
+  ARRAYFORMULA(
+    {
+      FILTER(RECORDS!A2:F, RECORDS!H2:H = TRUE),
+      IF(FILTER(RECORDS!G2:G, RECORDS!H2:H = TRUE), "✅", "❌")
+    }
+  ),
+  2, TRUE
+)
+
+// * conditional formatting
+// * based on character found, if so numb returned and activated, $G3 means abs ref (aka locked) col "G" but relative (dynamic) row
+A3:G
+Custom formula is
+=ISNUMBER(SEARCH("✅", $G3))
+=ISNUMBER(SEARCH("❌", $G3))

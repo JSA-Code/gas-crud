@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+    <base target="_top" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      form {
+        width: 80%;
+        margin: auto;
+        padding: 20px;
+        font-weight: 300;
+        font-size: large;
+        box-shadow: 0px 0px 10px #0000001a;
+      }
+
+      fieldset {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      form li + li {
+        margin-top: 15px;
+      }
+
+      li > p {
+        list-style: none;
+        padding: 0;
+        margin: 5px;
+      }
+
+      form input:required:invalid {
+        border: 2px solid red;
+        background-color: #fdd;
+      }
+
+      form input[type="text"],
+      form input[type="date"],
+      form select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-top: 5px;
+        font-size: medium;
+      }
+
+      form input[type="text"]:focus,
+      form input[type="date"]:focus,
+      form select:focus {
+        border-color: #008fb3;
+        outline: none;
+        box-shadow: 0 0 5px #008fb380;
+      }
+
+      form button {
+        background-color: #008fb3;
+        color: white;
+        padding: 10px 20px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: medium;
+        transition: background-color 0.3s ease;
+      }
+
+      div:has(input[type="radio"]) {
+        display: inline;
+        padding: 5px;
+      }
+
+      button:disabled {
+        background-color: grey;
+        cursor: not-allowed;
+      }
+
+      button:not(:disabled):hover {
+        background-color: #005f73;
+      }
+
+      .select-invalid {
+        border: 2px solid red;
+        background-color: #fdd;
+      }
+
+      .radio-invalid {
+        border: 2px solid red;
+        border-radius: 5px;
+        background-color: #fdd;
+      }
+    </style>
+  </head>
+  <body>
+    <form>
+      <fieldset>
+        <legend>Form</legend>
+        <ul>
+          <li>
+            <label for="id">ID:</label><br />
+            <input type="text" id="id" name="id" disabled />
+          </li>
+          <li>
+            <label for="name">Name:</label><br />
+            <input type="text" id="name" name="name" required />
+          </li>
+          <li>
+            <label for="amount">Amount:</label><br />
+            <input type="text" id="amount" name="amount" required />
+          </li>
+          <li>
+            <label for="type">Type:</label><br />
+            <select id="type" name="type" required>
+              <option value="ZELLE">ZELLE</option>
+              <option value="CASH">CASH</option>
+              <option value="CASH/ZELLE">CASH/ZELLE</option>
+              <option value="CASH/C.C.">CASH/C.C.</option>
+              <option value="C.C.">C.C.</option>
+              <option value="TRANSFER">TRANSFER</option>
+              <option value="CHECK">CHECK</option>
+              <option value="PAYMENT">PAYMENT</option>
+              <option value="B.P.">B.P.</option>
+              <option value="FREE">FREE</option>
+              <option value="MISTAKE">MISTAKE</option>
+              <option value="ABSENT">ABSENT</option>
+              <option value="" selected>NONE</option>
+            </select>
+          </li>
+          <li>
+            <label for="appt-date">Appointment Date:</label><br />
+            <input type="date" id="appt-date" name="appt-date" required />
+          </li>
+          <li>
+            <label for="date">Tax Year:</label><br />
+            <input type="date" id="date" name="date" required />
+          </li>
+          <li>
+            <p>Paid:</p>
+            <div>
+              <input
+                id="paid-yes"
+                type="radio"
+                name="paid"
+                value="true"
+                required
+              />
+              <label for="paid-yes">Yes</label>
+            </div>
+
+            <div>
+              <input
+                id="paid-no"
+                type="radio"
+                name="paid"
+                value="false"
+                required
+              />
+              <label for="paid-no">No</label>
+            </div>
+          </li>
+          <li>
+            <br />
+            <button type="button" id="submit" onclick="onSubmitForm()" disabled>
+              Update
+            </button>
+          </li>
+        </ul>
+      </fieldset>
+    </form>
+    <script>
+      const ID_ID = "id";
+      const NAME_ID = "name";
+      const AMOUNT_ID = "amount";
+      const TYPE_ID = "type";
+      const APPT_DATE_ID = "appt-date";
+      const DATE_ID = "date";
+      const PAID_ID = "paid";
+      const SUBMIT_ID = "submit";
+
+      function getElement(id) {
+        return document.getElementById(id);
+      }
+
+      function getElementValue(id) {
+        return getElement(id).value;
+      }
+
+      function setElementValue(id, value) {
+        const elem = getElement(id);
+
+        if (elem.type === "date") {
+          elem.valueAsDate = new Date(value);
+        } else {
+          elem.value = value;
+        }
+      }
+
+      function getCheckedValue(name) {
+        const checkedElement = document.querySelector(
+          `input[name="${name}"]:checked`
+        );
+        return checkedElement ? checkedElement.value : null;
+      }
+
+      function checkInputs() {
+        const typeElement = getElement(TYPE_ID);
+        const isTypeValid = typeElement.value !== "";
+
+        if (!isTypeValid) {
+          typeElement.classList.add("select-invalid");
+        } else {
+          typeElement.classList.remove("select-invalid");
+        }
+
+        const paidRadio = getCheckedValue(PAID_ID);
+        const radioDivs = Array.from(
+          document.querySelectorAll(`input[name="${PAID_ID}"]`)
+        ).map((input) => input.parentElement);
+
+        if (!paidRadio) {
+          radioDivs.forEach((div) => div.classList.add("radio-invalid"));
+        } else {
+          radioDivs.forEach((div) => div.classList.remove("radio-invalid"));
+        }
+
+        const submitButton = getElement(SUBMIT_ID);
+        const inputs = [NAME_ID, AMOUNT_ID, TYPE_ID, APPT_DATE_ID, DATE_ID].map(
+          getElementValue
+        );
+
+        submitButton.disabled =
+          inputs.some((input) => !input) || !isTypeValid || !paidRadio;
+      }
+
+      function populateForm([id, name, amount, type, apptDate, year, paid]) {
+        setElementValue(ID_ID, id);
+        setElementValue(NAME_ID, name);
+        setElementValue(AMOUNT_ID, amount);
+        setElementValue(TYPE_ID, type);
+        setElementValue(APPT_DATE_ID, apptDate);
+        setElementValue(DATE_ID, year + "T00:00:00Z");
+
+        // Google Sheets auto converts "true/false" string to true/false boolean
+        if (typeof paid === "boolean") {
+          getElement(paid ? "paid-yes" : "paid-no").checked = true;
+        }
+
+        // runs at startup if form auto-filled
+        checkInputs();
+      }
+
+      function onSubmitForm() {
+        try {
+          const name = getElementValue(NAME_ID);
+          const amount = getElementValue(AMOUNT_ID);
+          const type = getElementValue(TYPE_ID);
+          const apptDate = getElementValue(APPT_DATE_ID);
+          const date = getElementValue(DATE_ID);
+          const year = new Date(date + "T00:00:00Z")
+            .getUTCFullYear()
+            .toString();
+          const paid = getCheckedValue(PAID_ID);
+
+          google.script.run.processUpdateForm(
+            name,
+            amount,
+            type,
+            apptDate,
+            year,
+            paid
+          );
+          google.script.host.close();
+        } catch (error) {
+          console.error("Error updating form:", error);
+        }
+      }
+
+      // TODO research about EventListeners
+      document.addEventListener("DOMContentLoaded", () => {
+        getElement(NAME_ID).addEventListener("input", checkInputs);
+        document;
+        getElement(AMOUNT_ID).addEventListener("input", checkInputs);
+        document;
+        getElement(TYPE_ID).addEventListener("change", checkInputs);
+        document;
+        getElement(APPT_DATE_ID).addEventListener("input", checkInputs);
+        getElement(DATE_ID).addEventListener("input", checkInputs);
+        document
+          .querySelectorAll(`input[name="${PAID_ID}"]`)
+          .forEach((radio) => {
+            radio.addEventListener("change", checkInputs);
+          });
+        checkInputs();
+      });
+    </script>
+  </body>
+</html>
