@@ -17,16 +17,13 @@
         font-weight: 300;
         font-size: large;
         box-shadow: 0px 0px 10px #0000001a;
-      }
-
-      fieldset {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
       }
 
-      ul {
+      form ul {
         list-style: none;
         padding: 0;
         margin: 0;
@@ -36,7 +33,7 @@
         margin-top: 15px;
       }
 
-      li > p {
+      form li > p {
         list-style: none;
         padding: 0;
         margin: 5px;
@@ -66,7 +63,23 @@
         box-shadow: 0 0 5px #008fb380;
       }
 
-      form button {
+      .select-invalid {
+        border: 2px solid red;
+        background-color: #fdd;
+      }
+
+      form div:has(input[type="radio"]) {
+        display: inline;
+        padding: 5px;
+      }
+
+      .radio-invalid {
+        border: 2px solid red;
+        border-radius: 5px;
+        background-color: #fdd;
+      }
+
+      form button[type="submit"] {
         background-color: #008fb3;
         color: white;
         padding: 10px 20px;
@@ -79,35 +92,19 @@
         transition: background-color 0.3s ease;
       }
 
-      div:has(input[type="radio"]) {
-        display: inline;
-        padding: 5px;
-      }
-
-      button:disabled {
+      form button[type="submit"]:disabled {
         background-color: grey;
         cursor: not-allowed;
       }
 
-      button:not(:disabled):hover {
-        background-color: #005f73;
-      }
-
-      .select-invalid {
-        border: 2px solid red;
-        background-color: #fdd;
-      }
-
-      .radio-invalid {
-        border: 2px solid red;
-        border-radius: 5px;
-        background-color: #fdd;
+      form button[type="submit"]:not(:disabled):hover {
+        background-color: #26b2d5;
       }
     </style>
   </head>
   <body>
-    <form>
-      <fieldset>
+    <main>
+      <form id="updateForm" action="">
         <legend>Form</legend>
         <ul>
           <li>
@@ -160,7 +157,6 @@
               />
               <label for="paid-yes">Yes</label>
             </div>
-
             <div>
               <input
                 id="paid-no"
@@ -174,13 +170,11 @@
           </li>
           <li>
             <br />
-            <button type="button" id="submit" onclick="onSubmitForm()" disabled>
-              Update
-            </button>
+            <button type="submit" id="submit" disabled>Update</button>
           </li>
         </ul>
-      </fieldset>
-    </form>
+      </form>
+    </main>
     <script>
       const ID_ID = "id";
       const NAME_ID = "name";
@@ -193,6 +187,10 @@
 
       function getElement(id) {
         return document.getElementById(id);
+      }
+
+      function getAllElements(id) {
+        return document.querySelectorAll(id);
       }
 
       function getElementValue(id) {
@@ -228,7 +226,7 @@
 
         const paidRadio = getCheckedValue(PAID_ID);
         const radioDivs = Array.from(
-          document.querySelectorAll(`input[name="${PAID_ID}"]`)
+          getAllElements(`input[name="${PAID_ID}"]`)
         ).map((input) => input.parentElement);
 
         if (!paidRadio) {
@@ -263,18 +261,18 @@
         checkInputs();
       }
 
-      function onSubmitForm() {
-        try {
-          const name = getElementValue(NAME_ID);
-          const amount = getElementValue(AMOUNT_ID);
-          const type = getElementValue(TYPE_ID);
-          const apptDate = getElementValue(APPT_DATE_ID);
-          const date = getElementValue(DATE_ID);
-          const year = new Date(date + "T00:00:00Z")
-            .getUTCFullYear()
-            .toString();
-          const paid = getCheckedValue(PAID_ID);
+      function onSubmitForm(e) {
+        e.preventDefault();
 
+        const name = getElementValue(NAME_ID);
+        const amount = getElementValue(AMOUNT_ID);
+        const type = getElementValue(TYPE_ID);
+        const apptDate = getElementValue(APPT_DATE_ID);
+        const date = getElementValue(DATE_ID);
+        const year = new Date(date + "T00:00:00Z").getUTCFullYear().toString();
+        const paid = getCheckedValue(PAID_ID);
+
+        try {
           google.script.run.processUpdateForm(
             name,
             amount,
@@ -292,18 +290,14 @@
       // TODO research about EventListeners
       document.addEventListener("DOMContentLoaded", () => {
         getElement(NAME_ID).addEventListener("input", checkInputs);
-        document;
         getElement(AMOUNT_ID).addEventListener("input", checkInputs);
-        document;
         getElement(TYPE_ID).addEventListener("change", checkInputs);
-        document;
         getElement(APPT_DATE_ID).addEventListener("input", checkInputs);
         getElement(DATE_ID).addEventListener("input", checkInputs);
-        document
-          .querySelectorAll(`input[name="${PAID_ID}"]`)
-          .forEach((radio) => {
-            radio.addEventListener("change", checkInputs);
-          });
+        getAllElements(`input[name="${PAID_ID}"]`).forEach((radio) => {
+          radio.addEventListener("change", checkInputs);
+        });
+        getElement("updateForm").addEventListener("submit", onSubmitForm);
         checkInputs();
       });
     </script>
