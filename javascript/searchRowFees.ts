@@ -1,3 +1,5 @@
+/** @OnlyCurrentDoc */
+
 const map2 = new Map(); // Global variable to store row data
 
 function buildMap() {

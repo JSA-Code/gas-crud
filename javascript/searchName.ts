@@ -1,3 +1,5 @@
+/** @OnlyCurrentDoc */
+
 function searchName() {
   const html = HtmlService.createHtmlOutputFromFile("searchForm")
     .setWidth(600)
