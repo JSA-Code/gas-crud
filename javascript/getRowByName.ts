@@ -15,7 +15,8 @@ function getRowByName(name: string, sheetName: string): number | null {
     return null;
   }
 
-  const textFinder = sheet.createTextFinder(name);
+  // TODO performs partial matches, req EXACT matches
+  const textFinder = sheet.createTextFinder(name).matchEntireCell(true);
   const matches = textFinder.findAll();
   const lastColumnIndex = sheet.getLastColumn();
 
