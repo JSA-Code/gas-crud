@@ -1,4 +1,4 @@
-// * data from DB onto FE
+// * data from back to front sheet
 // * filters data based on true/false conditions, sorts based on ascending alphabetical last name, if/filter/sub true for check and false for cross
 =SORT(
   ARRAYFORMULA(
@@ -16,3 +16,7 @@ A3:G
 Custom formula is
 =ISNUMBER(SEARCH("✅", $G3))
 =ISNUMBER(SEARCH("❌", $G3))
+
+// * sequence
+// * based on if there is a non-empty name, used in back sheet
+=ARRAYFORMULA(IF(LEN(B2:B), ROW(B2:B) - ROW(B2) + 1, ""))
