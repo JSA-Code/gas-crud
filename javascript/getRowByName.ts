@@ -15,8 +15,13 @@ function getRowByName(name: string, sheetName: string): number | null {
     return null;
   }
 
-  // TODO performs partial matches, req EXACT matches
-  const textFinder = sheet.createTextFinder(name).matchEntireCell(true);
+  // * searches w/n single column
+  // * sheet.getLastRow() gets last row pos if content
+  // * range.getLastRow() gets last pos including empty cells, not good
+  const textFinder = sheet
+    .getRange(1, 2, sheet.getLastRow())
+    .createTextFinder(name)
+    .matchEntireCell(true);
   const matches = textFinder.findAll();
   const lastColumnIndex = sheet.getLastColumn();
 
